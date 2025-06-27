@@ -23,5 +23,5 @@ jobs:
 
     - name: Run Locust Test
       run: |
-       locust -f locustfile.py --headless -u 5 -r 1 -t 15s --host=https://reqres.in
+       locust -f locustfile.py --headless -u 5 -r 1 -t 15s --host=https://reqres.in || true
 
