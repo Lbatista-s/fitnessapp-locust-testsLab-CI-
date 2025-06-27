@@ -5,4 +5,7 @@ class FitnessAppUser(HttpUser):
 
     @task
     def login(self):
-        self.client.post("/api/login", json={"username": "user", "password": "pass"})
+        self.client.post("/api/login", json={
+            "email": "eve.holt@reqres.in", 
+            "password": "cityslicka"
+        })
