@@ -5,9 +5,11 @@ class FitnessAppUser(HttpUser):
 
     @task
     def login(self):
-        response = self.client.post("/api/login", json={
+        with self.client.post("/api/login", json={
             "email": "eve.holt@reqres.in",
             "password": "cityslicka"
-        })
-        if response.status_code != 200:
-            response.failure(f"Failed with status code {response.status_code}")
+        }, catch_response=True) as response:
+            if response.status_code != 200:
+                response.failure("Login failed")
+            elif response.elapsed.total_seconds() > 2:
+                response.failure("Response time exceeded 2 seconds")
