@@ -5,7 +5,9 @@ class FitnessAppUser(HttpUser):
 
     @task
     def login(self):
-        self.client.post("/api/login", json={
-            "email": "eve.holt@reqres.in", 
+        response = self.client.post("/api/login", json={
+            "email": "eve.holt@reqres.in",
             "password": "cityslicka"
         })
+        if response.status_code != 200:
+            response.failure(f"Failed with status code {response.status_code}")
