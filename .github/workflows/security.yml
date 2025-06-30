@@ -32,10 +32,10 @@ jobs:
       security-events: write      
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: snyk/actions/setup@v4
+      - uses: actions/checkout@v1
+      - uses: snyk/actions/setup@v1
       - name: Snyk Open Source Scan
-        uses: snyk/actions/scan@v4
+        uses: snyk/actions/scan@v1
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
