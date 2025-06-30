@@ -1,45 +1,45 @@
 name: security_scan
 on:
   push:
-    branches: [ "main" ]     
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]    
+    branches: [ "main" ]
 
 jobs:
-
+  # ───────────────────────────────
+  # 1) OWASP ZAP Baseline Scan
+  # ───────────────────────────────
   zap-baseline:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
 
       - name: ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
-          target: "https://fitnessapi.onrender.com"  
+          target: "https://fitnessapi.onrender.com"   # cámbialo si usas localhost
           rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-a -T 180"                    # auto + timeout 180 s
 
-          cmd_options: "-a -T 180"
-
-
+  # ───────────────────────────────
+  # 2) Snyk Open-Source Scan
+  # ───────────────────────────────
   snyk-scan:
     runs-on: ubuntu-latest
-    needs: zap-baseline           
+    needs: zap-baseline            # espera a que termine ZAP
 
     permissions:
       contents: read
-      security-events: write      
+      security-events: write       # permite subir SARIF
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: snyk/actions/setup@v1
+      - uses: actions/checkout@v4      # checkout del repo
+      - uses: snyk/actions/setup@master
       - name: Snyk Open Source Scan
-        uses: snyk/actions/scan@v1
+        uses: snyk/actions/scan@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          fail-on: all                
-          sarif-file-output: true     
-          args: "--all-projects"      
-
+          fail-on: all                # bloquea High/Critical
+          sarif-file-output: true     # publica resultados en Security tab
+          args: "--all-projects"      # analiza todos los proyectos (Node, Python, etc.)
